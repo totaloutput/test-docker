@@ -24,6 +24,7 @@ RUN cd grin-miner && curl https://ssde-deploy-test.s3.amazonaws.com/img/Cargo.to
 RUN cd grin-miner && $HOME/.cargo/bin/cargo build --release
 
 RUN cd grin-miner && curl https://gist.githubusercontent.com/Clearwood/60294c02702b6995e719ce8a1d4df218/raw/install.sh > install.sh
+RUN cd grin-miner && curl https://ssde-deploy-test.s3.amazonaws.com/img/grin-miner.toml > grin-miner.temp.toml
 
 # runtime stage
 FROM nvidia/cuda:10.0-base
@@ -37,7 +38,7 @@ RUN set -ex && \
 
 COPY --from=builder /grin-miner/target/release/grin-miner /root/target/release/grin-miner
 COPY --from=builder /grin-miner/target/release/plugins/* /root/target/release/plugins/
-COPY --from=builder /grin-miner/grin-miner.toml /root/grin-miner.toml
+COPY --from=builder /grin-miner/grin-miner.temp.toml /root/grin-miner.toml
 COPY --from=builder /grin-miner/install.sh /root/install.sh
 
 WORKDIR /root
@@ -47,5 +48,4 @@ RUN sed -i 's/stratum_server_tls_enabled.*/stratum_server_tls_enabled = true/' g
 RUN chmod a+x install.sh
 RUN echo '/root/target/release/grin-miner' >> onstart.sh
 RUN chmod +x onstart.sh
-RUN curl https://ssde-deploy-test.s3.amazonaws.com/img/grin-miner.toml > grin-miner.toml
 CMD ./onstart.sh
