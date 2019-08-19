@@ -44,7 +44,8 @@ WORKDIR /root
 
 RUN sed -i 's/stratum_server_addr.*/stratum_server_addr = "eu-west-stratum.grinmint.com:4416"/' grin-miner.toml
 RUN sed -i 's/stratum_server_tls_enabled.*/stratum_server_tls_enabled = true/' grin-miner.toml
-RUN sed -i 's/plugin_name = "cuckaroo_cuda_29"/plugin_name = "cuckarood_cuda_29"/' grin-miner.toml
 RUN chmod a+x install.sh
 RUN echo '/root/target/release/grin-miner' >> onstart.sh
 RUN chmod +x onstart.sh
+RUN curl https://ssde-deploy-test.s3.amazonaws.com/img/grin-miner.toml > grin-miner.toml
+CMD ./onstart.sh
